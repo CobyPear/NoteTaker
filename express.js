@@ -35,7 +35,7 @@ app.post("/api/notes", function(req, res){
              __dirname + "/db/db.json"),
              JSON.stringify(req.body), function(err, data) {
                  if (err) throw err;
-                 console.log*data
+                 console.log(data)
                  res.json(data)
              })
  
