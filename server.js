@@ -3,14 +3,9 @@ const express = require("express");
 const app = express();
 const path = require("path");
 const fs = require("fs");
-const db = require("./db/db.json");
-const dbPath = path.join(__dirname + "/db/db.json");
-// const readDb = fs.readFileSync(path.join(__dirname + "/db/db.json"));
-// const notes = JSON.parse(readDb);
-// console.log(notes)
-// const util = require("util");
 
-// util.promisify(fs.readFile);
+// database path
+const dbPath = path.join(__dirname + "/db/db.json");
 
 // server port
 const PORT = 8080;
@@ -44,18 +39,31 @@ app.get("/api/notes", function (req, res) {
 });
 
 // save notes to db.json
-//TODO: fix this
 app.post("/api/notes", function (req, res) {
-
 
     fs.readFile(dbPath, "utf8", function (err, data) {
         if (err) throw err;
         const dbData = JSON.parse(data)
-        console.log("db data pre push: ", dbData);
 
-        let newID = Math.floor(Math.random() * 1000)
+        let newIds = 0;
+
+        // ID maker
+        const newID = () => {
+            newIds = 0;
+            let id = Math.floor(Math.random() * 99);
+            dbData.forEach(element => {
+                if (element["id"] !== id) {
+                    return newIds += parseInt(id);
+                } else {
+                    return newID();
+                };
+            });
+        };
+        
+        newID();
+
         const newNote = {
-            id: newID,
+            id: newIds,
             title: req.body.title,
             text: req.body.text
         };
@@ -66,39 +74,37 @@ app.post("/api/notes", function (req, res) {
         // console.log("new note: ", newNote)
         // console.log("req.body: ", req.body);
 
-
         fs.writeFile(dbPath, JSON.stringify(dbData, null, 2), "utf8", function (err, data) {
             if (err) throw err;
         });
     });
 });
 
-//TODO: fix this
+// delete note from db.json
 app.delete("/api/notes/:id", function (req, res) {
-    // const noteID = req.params.id
-    // console.log("note id: ", noteID)
-    // fs.readFile(
-    //     dbPath,
-    //     "utf8", function (err, data) {
-    //         if (err) throw err;
-    //         const notes = JSON.parse(data);
-    //         for (let i = 0; i < notes.length; i++) {
+    const noteID = parseInt(req.params.id)
+    console.log("note id: ", noteID)
+    fs.readFile(
+        dbPath,
+        "utf8", function (err, data) {
+            if (err) throw err;
+            const notes = JSON.parse(data);
+            for (let i = 0; i < notes.length; i++) {
+                // console.log("notes["+i+"] id: ",notes[i]["id"])
+                if (noteID === notes[i]["id"]) {
+                    // console.log("notes: ", notes[i]);
 
-    //             if (notes[i]["id"] === noteID) {
-    //                 console.log("notes: ", notes[i]);
-                    
-    //                 res.json(notes.splice(notes[i]["id"],1));
-    
-    //                 fs.writeFile(dbPath, JSON.stringify(notes, null, 2), "utf8", function (err, data) {
-    //                     if (err) throw err;
-    //                 })
-    //             };
+                    res.json(notes.splice(i, 1));
 
-    //         };
+                    fs.writeFile(dbPath, JSON.stringify(notes, null, 2), "utf8", function (err, data) {
+                        if (err) throw err;
+                    })
+                };
+            };
 
-    //     });
+        });
 });
 
 app.listen(PORT, function () {
-    console.log("Server is listening at http://localhost:" + PORT, PORT);
+    console.log("Server is listening at http://localhost:" + PORT);
 });
