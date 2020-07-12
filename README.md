@@ -6,4 +6,4 @@ The app can be found [here](https://polar-badlands-27067.herokuapp.com/)
 
 # Demo
 
-![Demo gif](https://i.imgur.com/sthkcfh.mp4)
+![Demo gif](https://i.imgur.com/sthkcfh.gif)
