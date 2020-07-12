@@ -1,1 +1,27 @@
-{"title":"Here is a note title","text":"Here i am taking a note. whooooopty dooo"}
+[
+  {
+    "id": 433,
+    "title": "Note 1",
+    "text": "1"
+  },
+  {
+    "id": 512,
+    "title": "Note 2",
+    "text": "2"
+  },
+  {
+    "id": 995,
+    "title": "Note 3",
+    "text": "3"
+  },
+  {
+    "id": 534,
+    "title": "Note 4",
+    "text": "4"
+  },
+  {
+    "id": 983,
+    "title": "Note 5",
+    "text": "5"
+  }
+]
