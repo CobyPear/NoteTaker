@@ -8,7 +8,7 @@ const fs = require("fs");
 const dbPath = path.join(__dirname + "/db/db.json");
 
 // server port
-const PORT = 8080;
+const PORT = process.env.PORT || 8080;
 
 
 // express
@@ -59,7 +59,7 @@ app.post("/api/notes", function (req, res) {
                 };
             });
         };
-        
+
         newID();
 
         const newNote = {
@@ -83,7 +83,7 @@ app.post("/api/notes", function (req, res) {
 // delete note from db.json
 app.delete("/api/notes/:id", function (req, res) {
     const noteID = parseInt(req.params.id)
-    console.log("note id: ", noteID)
+    // console.log("note id: ", noteID)
     fs.readFile(
         dbPath,
         "utf8", function (err, data) {
