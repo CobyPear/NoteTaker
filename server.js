@@ -4,12 +4,8 @@ const app = express();
 const path = require("path");
 const fs = require("fs");
 
-// database path
-const dbPath = path.join(__dirname + "/db/db.json");
-
 // server port
 const PORT = process.env.PORT || 8080;
-
 
 // express
 app.use(express.static("public"));
@@ -17,10 +13,6 @@ app.use(express.static("db"));
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json());
 
-// root route
-app.get("/", function (req, res) {
-    res.sendFile("/public/index.html");
-});
 
 // /notes route
 app.get("/notes", function (req, res) {
@@ -29,79 +21,50 @@ app.get("/notes", function (req, res) {
 
 // display notes in db.json
 app.get("/api/notes", function (req, res) {
-    fs.readFile(
-        dbPath,
-        "utf8", function (err, data) {
-            if (err) throw err;
-            // console.log(data)
-            res.json(JSON.parse(data))
-        });
+    fs.readFile(path.join(__dirname + "/db/db.json"), "utf8", function (err, data) {
+        if (err) throw err;
+        // console.log(data)
+        res.json(JSON.parse(data))
+    });
 });
 
 // save notes to db.json
 app.post("/api/notes", function (req, res) {
 
-    fs.readFile(dbPath, "utf8", function (err, data) {
+    fs.readFile(path.join(__dirname + "/db/db.json"), "utf8", function (err, data) {
         if (err) throw err;
-        const dbData = JSON.parse(data)
+        data = JSON.parse(data);
 
-        let newIds = 0;
-
-        // ID maker
-        const newID = () => {
-            newIds = 0;
-            let id = Math.floor(Math.random() * 99);
-            dbData.forEach(element => {
-                if (element["id"] !== id) {
-                    return newIds += parseInt(id);
-                } else {
-                    return newID();
-                };
-            });
+        if (data.length === 0){
+            req.body.id = 0;
+        } else {
+            req.body.id = data[data.length -1].id +1;
         };
 
-        newID();
+        data.push(req.body);
 
-        const newNote = {
-            id: newIds,
-            title: req.body.title,
-            text: req.body.text
-        };
-
-        dbData.push(newNote);
-        res.json(newNote)
-        // console.log("dbData: ", dbData);
-        // console.log("new note: ", newNote)
-        // console.log("req.body: ", req.body);
-
-        fs.writeFile(dbPath, JSON.stringify(dbData, null, 2), "utf8", function (err, data) {
+        fs.writeFile(path.join(__dirname + "/db/db.json"), JSON.stringify(data, null, 2), "utf8", function (err) {
             if (err) throw err;
+            res.sendStatus(200)
         });
     });
 });
 
 // delete note from db.json
 app.delete("/api/notes/:id", function (req, res) {
-    const noteID = parseInt(req.params.id)
-    // console.log("note id: ", noteID)
-    fs.readFile(
-        dbPath,
-        "utf8", function (err, data) {
+    fs.readFile(path.join(__dirname + "/db/db.json"),"utf8", function (err, data) {
             if (err) throw err;
-            const notes = JSON.parse(data);
-            for (let i = 0; i < notes.length; i++) {
-                // console.log("notes["+i+"] id: ",notes[i]["id"])
-                if (noteID === notes[i]["id"]) {
-                    // console.log("notes: ", notes[i]);
-
-                    res.json(notes.splice(i, 1));
-
-                    fs.writeFile(dbPath, JSON.stringify(notes, null, 2), "utf8", function (err, data) {
-                        if (err) throw err;
-                    })
+            data = JSON.parse(data);
+            const filteredNotes = [];
+            for (let i = 0; i < data.length; i++) {
+                if (parseInt(req.params.id) !== data[i].id) {
+                    filteredNotes.push(data[i])
                 };
             };
-
+            fs.writeFile(path.join(__dirname + "/db/db.json"), JSON.stringify(filteredNotes, null, 2), "utf8", function (err) {
+                if (err) throw err;
+                res.sendStatus(200)
+            });
         });
 });
 
