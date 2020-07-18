@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 8080;
 // express
 app.use(express.static("public"));
 app.use(express.static("db"));
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 
@@ -45,7 +45,7 @@ app.post("/api/notes", function (req, res) {
 
         fs.writeFile(path.join(__dirname + "/db/db.json"), JSON.stringify(data, null, 2), "utf8", function (err) {
             if (err) throw err;
-            res.sendStatus(200)
+            res.sendStatus(200);
         });
     });
 });
