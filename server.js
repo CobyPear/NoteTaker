@@ -20,25 +20,27 @@ app.get("/notes", function (req, res) {
 
 // display notes in db
 app.get("/api/notes", function (req, res) {
+
     Note.getNotes()
-    .then(results => res.json(results))
-    .catch(console.error);
+        .then(results => res.json(results))
+        .catch(console.error);
 });
 
 // save notes to db
 app.post("/api/notes", function (req, res) {
 
-  Note.createNote(req.body.title, req.body.text)
-    .then(results => res.json(results))
-    .catch(console.error);
+    Note.createNote(req.body.title, req.body.text)
+        .then(results => res.json(results))
+        .catch(console.error);
 });
 
 // delete note from db
 app.delete("/api/notes/:id", function (req, res) {
+
     const id = req.params.id
     Note.deleteNote(id)
-    .then(results => res.json(results))
-    .catch(console.error);
+        .then(results => res.json(results))
+        .catch(console.error);
 });
 
 app.listen(PORT, function () {
