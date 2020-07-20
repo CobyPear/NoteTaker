@@ -1,15 +1,19 @@
 const orm = require("../config/orm");
-require('dotenv').config()
 
-async function test() {
-    try {
-        const notes = await orm.allNotes();
-        await console.log(notes);
+class Note {
 
-    } catch (error) {
-        console.error(error);
+    getNotes() {
+        return orm.allNotes();
+    };
 
-    }
-}
+    createNote(title, body) {
+        return orm.createNote(title, body);
+    };
 
-test();
+    deleteNote(id) {
+        return orm.deleteNote(id);
+    };
+
+};
+
+module.exports = new Note()

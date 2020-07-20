@@ -3,7 +3,7 @@ const mysql = require('mysql');
 const util = require('util');
 // enviromental variables
 require('dotenv').config();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT_LOCAL;
 const USER = process.env.USER;
 const PASS = process.env.PASS;
 const HOST = process.env.HOST;
